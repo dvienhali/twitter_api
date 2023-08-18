@@ -47,14 +47,21 @@ def request_to_endpoint(url):
         )
     return response
 
+#Remove not wanted data
+def clean_data(data):
+    for tweet in data:
+        del tweet["edit_history_tweet_ids"]
+        tweet["id"] = "https://twitter.com/anyuser/status/"+tweet["id"]
+    return data
+    
+
 #Save Tweets to a CSV file
 def data_to_csv(data):
-    clean_data = [{key: value for key, value in tweet.items() if key != 'edit_history_tweet_ids'} for tweet in data]
     with open('tweets.csv', 'w') as f:
         keys = ['id', 'created_at', 'text']
         writer = csv.DictWriter(f, fieldnames=keys)
         writer.writeheader()
-        writer.writerows(clean_data)
+        writer.writerows(data)
 
 #Main function to lookup and save Tweets based on specified options
 def main(user_id,retweet,reply):
@@ -76,8 +83,11 @@ def main(user_id,retweet,reply):
             next_page_id = data["meta"]["next_token"]
         else:
             next_page_id = ""
+        
+    clean_tweets = clean_data(tweets)
             
-    data_to_csv(tweets)
+    data_to_csv(clean_tweets)
+
 
 if __name__ == "__main__":
     main(user_id="",retweet=False,reply=False)
