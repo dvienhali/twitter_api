@@ -47,7 +47,7 @@ def request_to_endpoint(url):
         )
     return response
 
-#Remove not wanted data
+#Remove unwanted data
 def clean_data(data):
     for tweet in data:
         del tweet["edit_history_tweet_ids"]
